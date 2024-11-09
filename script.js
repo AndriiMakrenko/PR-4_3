@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const sendButton = document.querySelector('#send');
     let numberQuestion = 0;
     const finalAnswers = [];
-    let testCompleted = false; 
+    let testCompleted = false;
 
     const questions = [
         {
@@ -55,8 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
         questions[index].answers.forEach((answer) => {
             const answerItem = document.createElement('div');
             answerItem.classList.add('answers-item', 'd-flex', 'justify-content-center');
+            const answerChecked = finalAnswers[numberQuestion] && finalAnswers[numberQuestion].hasOwnProperty(questions[index].question) && 
+                (questions[index].type === 'checkbox' ?
+                    finalAnswers[numberQuestion][questions[index].question].includes(answer.title) :
+                    finalAnswers[numberQuestion][questions[index].question] === answer.title);
             answerItem.innerHTML = `
-                <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none" value="${answer.title}">
+                <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none" value="${answer.title}" ${answerChecked ? 'checked' : ''}>
                 <label for="${answer.title}" class="d-flex flex-column justify-content-between">
                     <img class="answerImg" src="${answer.url}" alt="burger">
                     <span>${answer.title}</span>
@@ -93,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
             
             case (numberQuestion === questions.length + 1):
-                formAnswers.innerHTML = `
+                formAnswers.innerHTML = ` 
                     <p>Дякуємо за проходження тесту!</p>
                     <p>Бажаєте пройти тест ще раз?</p>
                     <button class="btn btn-primary" id="restartYes">Так</button>
@@ -119,14 +123,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const inputs = [...formAnswers.elements].filter((input) => input.checked || input.id === 'numberPhone');
         inputs.forEach((input, index) => {
             if (numberQuestion >= 0 && numberQuestion < questions.length) {
-                obj[`${index}_${questions[numberQuestion].question}`] = input.value;
+                if (questions[numberQuestion].type === 'checkbox') {
+                    if (!obj[`${questions[numberQuestion].question}`]) {
+                        obj[`${questions[numberQuestion].question}`] = [];
+                    }
+                    obj[`${questions[numberQuestion].question}`].push(input.value);
+                } else {
+                    obj[`${questions[numberQuestion].question}`] = input.value;
+                }
             }
             if (numberQuestion === questions.length) {
                 obj['Номер телефону'] = input.value;
             }
         });
-        finalAnswers.push(obj);
-        console.log(finalAnswers);  
+        finalAnswers[numberQuestion] = obj; /
+        console.log(finalAnswers); 
     };
 
     nextButton.onclick = () => {
@@ -136,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     prevButton.onclick = () => {
+        checkAnswer();
         numberQuestion--;
         renderQuestions(numberQuestion);
     };
