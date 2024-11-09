@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         finalAnswers.push(obj);
-        console.log(finalAnswers);  // Вывод ответа в консоль
+        console.log(finalAnswers);  
     };
 
     nextButton.onclick = () => {
