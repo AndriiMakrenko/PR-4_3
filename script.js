@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 obj['Номер телефону'] = input.value;
             }
         });
-        finalAnswers[numberQuestion] = obj; /
+        finalAnswers[numberQuestion] = obj; 
         console.log(finalAnswers); 
     };
 
